@@ -12,9 +12,12 @@ app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
     let reply_token = req.body.events[0].replyToken
     let msg = req.body.events[0].message.text
+    let acdata = req.body.events[0].postback.data
     // start action with events 
     if (msg == "copy") {
         copy(reply_token, msg)
+    } else if (acdata != null) {
+        copy(reply_token, "msg")
     }
     reply(reply_token)
     res.sendStatus(200)
@@ -49,21 +52,20 @@ function reply(reply_token) {
                         "label": "View detail",
                         "uri": "https://software.thaiware.com"
                     },
-                    "actions": [
-                        {
-                          "type": "postback",
-                          "label": "Buy",
-                          "data": "action=buy&itemid=123"
+                    "actions": [{
+                            "type": "postback",
+                            "label": "Buy",
+                            "data": "action=buy&itemid=123"
                         },
                         {
-                          "type": "postback",
-                          "label": "Add to cart",
-                          "data": "action=add&itemid=123"
+                            "type": "postback",
+                            "label": "Add to cart",
+                            "data": "action=add&itemid=123"
                         },
                         {
-                          "type": "uri",
-                          "label": "View detail",
-                          "uri": "https://software.thaiware.com"
+                            "type": "uri",
+                            "label": "View detail",
+                            "uri": "https://software.thaiware.com"
                         }
                     ]
                 }
