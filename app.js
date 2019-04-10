@@ -29,7 +29,7 @@ function reply(reply_token,msg) {
                 text: msg
             }]
     })
-    request.get({
+    request.post({
         url: 'https://api.line.me/v2/bot/message/delivery/reply',
         headers: headers,
         body: body
