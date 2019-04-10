@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
     let reply_token = req.body.events[0].replyToken
     let msg = req.body.events[0].message.text
-    let acdata = req.body.events[0].postback.data
+    let acdata = req.body.events[0].postback.data.action
     // start action with events 
     if (msg == "copy") {
         copy(reply_token, msg)
