@@ -29,8 +29,8 @@ function reply(reply_token,msg) {
                 text: msg
             }]
     })
-    request.post({
-        url: 'https://api.line.me/v2/bot/message/reply',
+    request.get({
+        url: 'https://api.line.me/v2/bot/message/delivery/reply',
         headers: headers,
         body: body
     }, (err, res, body) => {
