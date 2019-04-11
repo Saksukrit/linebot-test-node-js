@@ -11,16 +11,17 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
     let reply_token = req.body.events[0].replyToken
-    let msg = req.body.events[0].message.text
-    // let acdata = req.body.events[0].postback.data.action
+    // let msg = req.body.events[0].message.text
+    let postbackData = req.body.events[0].postback.data
     // start action with events 
-    if (msg == "copy") {
-        copy(reply_token, msg)
-    } 
-    // else if (acdata != null) {
-    //     copy(reply_token, "msg")
+    // if (msg == "copy") {
+    //     copy(reply_token, msg)
     // }
-    reply(reply_token)
+    // else
+    if (postbackData != null) {
+        copy(reply_token, postbackData)
+    }
+    // reply(reply_token)
     res.sendStatus(200)
 })
 app.listen(port)
@@ -34,44 +35,39 @@ function reply(reply_token) {
     let body = JSON.stringify({
         replyToken: reply_token,
         messages: [{
-                type: 'text',
-                text: 'Hello'
-            },
-            {
-                "type": "template",
-                "altText": "This is a buttons template",
-                "template": {
-                    "type": "buttons",
-                    "thumbnailImageUrl": "https://software.thaiware.com/upload_misc/software/2018_03/thumbnails/13783_180320105145r1.jpg",
-                    "imageAspectRatio": "rectangle",
-                    "imageSize": "cover",
-                    "imageBackgroundColor": "#FFFFFF",
-                    "title": "Menu",
-                    "text": "Please select",
-                    "defaultAction": {
+            "type": "template",
+            "altText": "This is a buttons template",
+            "template": {
+                "type": "buttons",
+                "thumbnailImageUrl": "https://software.thaiware.com/upload_misc/software/2018_03/thumbnails/13783_180320105145r1.jpg",
+                "imageAspectRatio": "rectangle",
+                "imageSize": "cover",
+                "imageBackgroundColor": "#FFFFFF",
+                "title": "Menu",
+                "text": "Please select",
+                "defaultAction": {
+                    "type": "uri",
+                    "label": "View detail",
+                    "uri": "https://software.thaiware.com"
+                },
+                "actions": [{
+                        "type": "postback",
+                        "label": "Buy",
+                        "data": "action=buy&itemid=123"
+                    },
+                    {
+                        "type": "postback",
+                        "label": "Add to cart",
+                        "data": "action=add&itemid=123"
+                    },
+                    {
                         "type": "uri",
                         "label": "View detail",
                         "uri": "https://software.thaiware.com"
-                    },
-                    "actions": [{
-                            "type": "postback",
-                            "label": "Buy",
-                            "data": "action=buy&itemid=123"
-                        },
-                        {
-                            "type": "postback",
-                            "label": "Add to cart",
-                            "data": "action=add&itemid=123"
-                        },
-                        {
-                            "type": "uri",
-                            "label": "View detail",
-                            "uri": "https://software.thaiware.com"
-                        }
-                    ]
-                }
+                    }
+                ]
             }
-        ]
+        }]
     })
     request.post({
         url: 'https://api.line.me/v2/bot/message/reply',
@@ -82,7 +78,7 @@ function reply(reply_token) {
     });
 }
 
-function copy(reply_token, msg) {
+function copy(reply_token, data) {
     let headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer {' + ChannelAccessToken + '}'
@@ -91,7 +87,7 @@ function copy(reply_token, msg) {
         replyToken: reply_token,
         messages: [{
             type: 'text',
-            text: msg
+            text: "msg" + data
         }]
     })
     request.post({
